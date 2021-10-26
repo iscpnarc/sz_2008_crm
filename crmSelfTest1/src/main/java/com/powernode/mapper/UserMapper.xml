@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.powernode.mapper.UserMapper">
+    <!--命名空间需要查询的接口类型-->
+
+    <!--
+    查询映射文件的id，应该为查询的方法名
+    因为Spring容器管理了映射文件的typeAliases标签，将封装结果的类型重命名了
+    #{} 表示占位符，大括号中的字段，会由数据填充
+    -->
+    <select id="getUser" resultType="User">
+        select * from tbl_user
+        where
+        loginAct=#{loginAct} and loginPwd=#{loginPwd}
+    </select>
+
+    <select id="getUserString" resultType="String">
+        select CONCAT(loginACt,'|',name) from tbl_user
+    </select>
+
+</mapper>

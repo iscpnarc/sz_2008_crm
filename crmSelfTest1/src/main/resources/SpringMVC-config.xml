@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!--
+    SpringMVC-config.xml配置文件需要配置四件事情
+    1、SpringMVC也需要扫描包
+    2、springMVC需要开启注解驱动
+    3、springmvc需要配置视图解析器
+    4、springMVC需要处理静态资源的访问，如果请求访问静态资源，转由web服务器默认的servlet处理
+    -->
+
+
+    <!--扫描包-->
+    <context:component-scan base-package="com.powernode.controller"/>
+    <!--启用注解驱动-->
+    <mvc:annotation-driven />
+    <!--视图解析器-->
+    <!--前缀目录为：/WEB-INF/jsp/-->
+    <!--后缀扩展名为：.jsp-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/" />
+        <property name="suffix" value=".jsp" />
+    </bean>
+    <!--如果发现是静态资源的请求，就将该请求转由Web应用服务器默认的Servlet处理-->
+    <mvc:default-servlet-handler />
+    <!-- 配置站点入口 -->
+    <!--如果有控制器，则不起作用-->
+    <!--<mvc:view-controller path="/" view-name="settings/login" />-->
+
+    <!--注册拦截器，声明拦截到的请求和放过的请求，以及请求被什么拦截器拦截-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <mvc:exclude-mapping path="/"/>
+            <mvc:exclude-mapping path="/user/login"/>
+            <mvc:exclude-mapping path="/user/login.do"/>
+            <mvc:exclude-mapping path="/user/logout.do"/>
+            <bean class="com.powernode.interceptor.LoginInterceptor"></bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+</beans>

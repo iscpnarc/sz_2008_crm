@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--spring容器需要扫描包-->
+    <context:component-scan base-package="com.powernode"/>
+
+
+    <!--spring容器需要注入数据源，以及引入外部properties文件-->
+        <!--加载配置-->
+            <context:property-placeholder location="classpath:jdbc.properties" ignore-unresolvable="true"/>
+        <!--配置数据源druid-->
+            <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+                <property name="driverClassName" value="${jdbc.driver}" />
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+            </bean>
+
+
+    <!--
+    spring容器需要整合mybatis，注入mybatis的核心对象sqlSessionFactory，核心对象中引入了mybatis-config.xml文件，并且将映射文件批量取了别名
+    管理注册映射文件mapper
+    -->
+        <!-- 配置 SqlSessionFactory -->
+            <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+                <!--读取mybatis的主配置-->
+                <property name="configLocation" value="classpath:mybatis-config.xml"/>
+                <!--衔接数据源，目前使用的是数据库连接池-->
+                <property name="dataSource" ref="dataSource" />
+                <!--resultType的类型，批量起别名,放在beans包中【也就是实体】-->
+                <property name="typeAliasesPackage" value="com.powernode.beans" />
+            </bean>
+
+            <!-- 配置Spring整合MyBatis，扫描包 -->
+            <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+                <!--注册MyBatis的映射文件-->
+                <property name="basePackage" value="com.powernode.mapper" />
+                <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+            </bean>
+
+
+    <!--spring容器和springmvc没有管理吗？-->
+
+</beans>
